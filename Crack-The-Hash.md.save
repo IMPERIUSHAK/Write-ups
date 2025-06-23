@@ -1,0 +1,5 @@
+
+
+# 1.1 hashcat -m 0 -a 0 48bb6e862e54f2a795ffc4e541caed4d /path/to/wordlist/rockyou.txt
+
+# 1.2 
