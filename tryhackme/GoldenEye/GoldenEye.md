@@ -24,5 +24,4 @@ Who needs to make sure they update their default password?--->boris
 
 and if go to `http://<target_IP>/terminal.js` you'll find hex encoded password to decode it just simpy past in browser it'll automaticly decode it because of Percent-encoding and you'll get boris old password InvincibleHack3r
 
-
-
+# IDK but this cft works so slow in my network i cant use even port scans, it'll take at least 6-7 hours that why i make it till Task 2
