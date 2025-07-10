@@ -1,0 +1,22 @@
+Based nmap scan:
+
+`nmap -n- -sV -sS -Pn 10.10.244.165`
+```
+
+```
+after nmap scan we answer to some questions like:
+
+
+What is on the highest port?
+
+Answer: ssh
+
+What's running on port 10000?
+
+Answer: webmin 
+
+Can you exploit the service running on that port? (yay/nay answer)
+
+Answer:nay
+
+
