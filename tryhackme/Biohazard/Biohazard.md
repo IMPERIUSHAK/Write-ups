@@ -76,5 +76,45 @@ Answer: `gold_emblem{58a8c41a9d08b8a4e38d02a4d7ff4843}`
 
 so the type of this cipher is rot13 so i use [CyberCHief](https://gchq.github.io/CyberChef/#recipe=ROT13_Brute_Force(true,true,false,100,0,true,'')&input=TGJoIHRyZyBndXIgb3lociB0cnogb2wgY2hmdXZhdCBndXIgZmduZ2hmIGdiIGd1ciB5YmpyZSBzeWJiZS4gR3VyIHRyeiB2ZiBiYSBndXIgcXZhdmF0RWJieiBzdmVmZyBzeWJiZS4gSXZmdmcgZm5jY3V2ZXIudWd6eQ) to brutforce Rot13
 
-9. 
+this is the result ---> `You get the blue gem by pushing the status to the lower floor. The gem is on the diningRoom first fl`
 
+now i should research /diningRoom/, so after some research i used golden emblem flag into input and get new cipher:
+
+`klfvg ks r wimgnd biz mpuiui ulg fiemok tqod. Xii jvmc tbkg ks tempgf tyi_hvgct_jljinf_kvc`
+
+it should be vigenere cipher and I already have key which is `rebecca` so after decoding in [CyberChief](https://gchq.github.io/CyberChef/#recipe=Vigen%C3%A8re_Decode('rebecca')&input=a2xmdmcga3MgciB3aW1nbmQgYml6IG1wdWl1aSB1bGcgZmllbW9rIHRxb2QuIFhpaSBqdm1jIHRia2cga3MgdGVtcGdmIHR5aV9odmdjdF9qbGppbmZfa3Zj)
+
+I got this message:`there is a shield key inside the dining room. The html page is called the_great_shield_key`
+
+So its the hidden page in dining room ---> the_great_shield_key.html, i decided to visit 
+Yup, was with shield_key ---> `shield_key{48a7a9227cd7eb89f0a062590798cbac}`
+
+9. What is blue gem flag?
+
+I didn't find anything else in the previous directories, so I decided to go to a new one in the map we found (`/artRoom/MansionMap.html`).
+
+I went to `/diningRoom2F/` and found another commented encoded string:
+
+~~~
+┌──(user㉿Y0B01)-[~/Desktop/walkthroughs/thm/Biohazard]
+└─$ curl -s "http://$IP/diningRoom2F/" | grep "<\!--"
+	<!-- Lbh trg gur oyhr trz ol chfuvat gur fgnghf gb gur ybjre sybbe. Gur trz vf ba gur qvavatEbbz svefg sybbe. Ivfvg fnccuver.ugzy -->
+~~~
+
+We are looking at a ROT13 cipher. You can find several online tools to decode it. It decodes to:
+
+```
+You get the blue gem by pushing the status to the lower floor. The gem is on the diningRoom first floor. Visit sapphire.html
+```
+
+Let's do it then. Navigate to `/diningRoom/sapphire.html` and we have the blue gem flag now:
+
+~~~
+┌──(user㉿Y0B01)-[~/Desktop/walkthroughs/thm/Biohazard]
+└─$ curl -s "http://$IP/diningRoom/sapphire.html" 
+blue_jewel{e1d457e96cac640f863ec7bc475d48aa}
+~~~
+
+Blue gem flag: `blue_jewel{e1d457e96cac640f863ec7bc475d48aa}`
+
+10. 
