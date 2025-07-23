@@ -248,4 +248,6 @@ Answer: **abcd1234**
 
 After i found admins pssword i used reeverse shell to get into server, but i stacked with new problem, and It's lxd privESC
 
-So now we start to PrivEsc Lxd:
+So now we start to PrivEsc Lxd here is how ---> https://www.hackingarticles.in/lxd-privilege-escalation/
+
+
