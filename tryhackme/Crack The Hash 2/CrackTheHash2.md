@@ -51,4 +51,8 @@ What is the last word of the list?
 
 **Answer:information**
 
+Crack this md5 hash with combination.txt.
 
+`e5b47b7e8df2597077e703c76ee86aee`
+
+**Answer:1551-li**
